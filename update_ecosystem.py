@@ -95,17 +95,24 @@ def search_and_summarise(org_name):
     """Use Claude with web search to summarise recent news about the org."""
     today = datetime.today().strftime("%B %Y")
 
-    prompt = f"""Search the web for recent news and updates about "{org_name}" from the past {MONTHS_BACK} month(s). Focus on:
-- New products, tools or data releases
-- Key publications or reports
-- Policy announcements or partnerships
-- Funding rounds or major organisational changes
+prompt = f"""Search the web for recent news about "{org_name}" from the past {MONTHS_BACK} month(s).
+
+Only report on these four topics:
+1. New products or tools launched
+2. New policy changes or regulatory announcements
+3. New technology partnerships
+4. New nature finance announcements
 
 Today's date is {today}.
 
-Write a concise 2-4 sentence summary of the most relevant recent updates.
-If there is nothing noteworthy, say "No significant updates found."
-Write in plain prose with no bullet points."""
+If you find relevant updates, write exactly 2 sentences summarising the most important one. Each sentence must include a markdown hyperlink to the source, formatted like this: [anchor text](URL).
+
+Example format:
+{org_name} launched a new biodiversity monitoring tool in partnership with the EU ([read more](https://example.com)). The tool integrates eDNA data with satellite imagery to provide real-time ecosystem assessments ([source](https://example.com)).
+
+If none of the four topics above have any updates, write only: "No relevant updates found."
+
+Do not include bullet points, headers, or any other formatting."""
 
     response = anthropic_client.messages.create(
         model="claude-haiku-4-5-20251001",
