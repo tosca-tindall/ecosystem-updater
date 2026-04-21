@@ -1,0 +1,30 @@
+ame: Weekly Ecosystem Update
+
+on:
+  schedule:
+    # Runs every Monday at 8:00am UTC
+    - cron: '0 8 * * 1'
+  workflow_dispatch:   # also allows manual trigger from GitHub UI
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run updater
+        env:
+          NOTION_TOKEN:        ${{ secrets.NOTION_TOKEN }}
+          ANTHROPIC_API_KEY:   ${{ secrets.ANTHROPIC_API_KEY }}
+          NOTION_DATABASE_ID:  ${{ secrets.NOTION_DATABASE_ID }}
+        run: python update_ecosystem.py
